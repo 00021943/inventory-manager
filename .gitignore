@@ -1,0 +1,16 @@
+media/*
+!media/.gitkeep
+
+static/*
+!static/.gitkeep
+
+.venv
+venv
+.env
+.DS_Store
+.vscode
+.idea
+.pytest_cache
+__pycache__
+
+db.sqlite3

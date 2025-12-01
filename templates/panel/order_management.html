@@ -1,0 +1,91 @@
+{% extends 'panel/base_panel.html' %}
+
+{% block title %}Order Management - Staff Panel{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1>Order Management</h1>
+    <div class="btn-group" role="group">
+        <a href="{% url 'panel:order_management' %}" 
+           class="btn btn-outline-primary {% if not current_status %}active{% endif %}">All</a>
+        <a href="{% url 'panel:order_management' %}?status=pending" 
+           class="btn btn-outline-warning {% if current_status == 'pending' %}active{% endif %}">Pending</a>
+        <a href="{% url 'panel:order_management' %}?status=processing" 
+           class="btn btn-outline-info {% if current_status == 'processing' %}active{% endif %}">Processing</a>
+        <a href="{% url 'panel:order_management' %}?status=completed" 
+           class="btn btn-outline-success {% if current_status == 'completed' %}active{% endif %}">Completed</a>
+        <a href="{% url 'panel:order_management' %}?status=cancelled" 
+           class="btn btn-outline-danger {% if current_status == 'cancelled' %}active{% endif %}">Cancelled</a>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>Order ID</th>
+                        <th>Customer</th>
+                        <th>Items</th>
+                        <th>Total</th>
+                        <th>Status</th>
+                        <th>Date</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for order in orders %}
+                    <tr>
+                        <td>
+                            <strong>#{{ order.id }}</strong>
+                        </td>
+                        <td>
+                            {{ order.user.get_full_name|default:order.user.username }}
+                            <br><small class="text-muted">{{ order.user.email }}</small>
+                        </td>
+                        <td>
+                            <small>
+                                {% for item in order.items.all|slice:":3" %}
+                                    {{ item.quantity }}x {{ item.product.name }}<br>
+                                {% endfor %}
+                                {% if order.items.count > 3 %}
+                                    <em>+{{ order.items.count|add:"-3" }} more...</em>
+                                {% endif %}
+                            </small>
+                        </td>
+                        <td>
+                            <strong>${{ order.total_price|floatformat:2 }}</strong>
+                        </td>
+                        <td>
+                            <span class="badge bg-{% if order.status == 'completed' %}success{% elif order.status == 'pending' %}warning{% elif order.status == 'processing' %}info{% else %}danger{% endif %}">
+                                {{ order.status|title }}
+                            </span>
+                        </td>
+                        <td>
+                            {{ order.created_at|date:"M d, Y" }}<br>
+                            <small class="text-muted">{{ order.created_at|date:"H:i" }}</small>
+                        </td>
+                        <td>
+                            <a href="{% url 'panel:order_detail' order.pk %}" class="btn btn-sm btn-primary">
+                                <i class="bi bi-eye"></i> View
+                            </a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="7" class="text-center py-4">
+                            {% if current_status %}
+                                No {{ current_status }} orders found.
+                            {% else %}
+                                No orders found.
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

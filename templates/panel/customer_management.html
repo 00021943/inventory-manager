@@ -1,0 +1,146 @@
+{% extends 'panel/base_panel.html' %}
+
+{% block title %}Customer Management - Staff Panel{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1>Customer Management</h1>
+</div>
+
+<!-- Search Form -->
+<div class="card mb-4">
+    <div class="card-body">
+        <form method="get" action="{% url 'panel:customer_management' %}" class="row g-3">
+            <div class="col-md-10">
+                <input type="text" 
+                       name="search" 
+                       class="form-control" 
+                       placeholder="Search by username, email, or name..." 
+                       value="{{ search_query }}">
+            </div>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-primary w-100">
+                    <i class="bi bi-search"></i> Search
+                </button>
+            </div>
+        </form>
+        {% if search_query %}
+        <div class="mt-2">
+            <a href="{% url 'panel:customer_management' %}" class="btn btn-sm btn-outline-secondary">
+                <i class="bi bi-x-circle"></i> Clear Search
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>Username</th>
+                        <th>Full Name</th>
+                        <th>Email</th>
+                        <th>Status</th>
+                        <th>Total Orders</th>
+                        <th>Total Spent</th>
+                        <th>Joined</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for customer in customers %}
+                    <tr>
+                        <td>
+                            <strong>{{ customer.username }}</strong>
+                        </td>
+                        <td>{{ customer.get_full_name|default:"-" }}</td>
+                        <td>{{ customer.email|default:"-" }}</td>
+                        <td>
+                            {% if customer.is_active %}
+                                <span class="badge bg-success">Active</span>
+                            {% else %}
+                                <span class="badge bg-danger">Inactive</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <span class="badge bg-info">{{ customer.total_orders|default:0 }}</span>
+                        </td>
+                        <td>
+                            {% if customer.total_spent %}
+                                ${{ customer.total_spent|floatformat:2 }}
+                            {% else %}
+                                $0.00
+                            {% endif %}
+                        </td>
+                        <td>{{ customer.date_joined|date:"M d, Y" }}</td>
+                        <td>
+                            <div class="btn-group btn-group-sm" role="group">
+                                <a href="{% url 'panel:customer_detail' customer.pk %}" class="btn btn-outline-primary" title="View Details">
+                                    <i class="bi bi-eye"></i>
+                                </a>
+                                {% if customer.is_active %}
+                                <a href="{% url 'panel:customer_toggle_status' customer.pk %}" 
+                                   class="btn btn-outline-warning"
+                                   title="Deactivate"
+                                   onclick="return confirm('Are you sure you want to deactivate this customer?')">
+                                    <i class="bi bi-pause-circle"></i>
+                                </a>
+                                {% else %}
+                                <a href="{% url 'panel:customer_toggle_status' customer.pk %}" 
+                                   class="btn btn-outline-success"
+                                   title="Activate">
+                                    <i class="bi bi-play-circle"></i>
+                                </a>
+                                {% endif %}
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="8" class="text-center py-4">
+                            {% if search_query %}
+                                No customers found matching "{{ search_query }}".
+                            {% else %}
+                                No customers found.
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Customer Statistics -->
+<div class="row mt-4">
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body">
+                <h6 class="card-subtitle mb-2 text-muted">Total Customers</h6>
+                <h3 class="card-title">{{ total_customers }}</h3>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body">
+                <h6 class="card-subtitle mb-2 text-muted">Active Customers</h6>
+                <h3 class="card-title text-success">{{ active_customers }}</h3>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body">
+                <h6 class="card-subtitle mb-2 text-muted">Customers with Orders</h6>
+                <h3 class="card-title text-primary">{{ customers_with_orders }}</h3>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

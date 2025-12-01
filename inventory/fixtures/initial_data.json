@@ -1,0 +1,156 @@
+[
+    {
+        "model": "inventory.category",
+        "pk": 1,
+        "fields": {
+            "name": "Electronics",
+            "description": "Gadgets, devices, and accessories."
+        }
+    },
+    {
+        "model": "inventory.category",
+        "pk": 2,
+        "fields": {
+            "name": "Clothing",
+            "description": "Men's and Women's apparel."
+        }
+    },
+    {
+        "model": "inventory.category",
+        "pk": 3,
+        "fields": {
+            "name": "Home & Garden",
+            "description": "Furniture, decor, and gardening tools."
+        }
+    },
+    {
+        "model": "inventory.product",
+        "pk": 1,
+        "fields": {
+            "category": 1,
+            "name": "Smartphone X Pro",
+            "description": "Latest model with high-res camera and long battery life.",
+            "price": "999.99",
+            "stock_quantity": 50,
+            "created_at": "2025-01-01T10:00:00Z",
+            "updated_at": "2025-01-01T10:00:00Z"
+        }
+    },
+    {
+        "model": "inventory.product",
+        "pk": 2,
+        "fields": {
+            "category": 1,
+            "name": "Wireless Noise-Canceling Headphones",
+            "description": "Immersive sound with active noise cancellation.",
+            "price": "249.99",
+            "stock_quantity": 100,
+            "created_at": "2025-01-01T10:00:00Z",
+            "updated_at": "2025-01-01T10:00:00Z"
+        }
+    },
+    {
+        "model": "inventory.product",
+        "pk": 3,
+        "fields": {
+            "category": 1,
+            "name": "4K Ultra HD Smart TV",
+            "description": "55-inch display with vibrant colors and smart apps.",
+            "price": "599.00",
+            "stock_quantity": 20,
+            "created_at": "2025-01-01T10:00:00Z",
+            "updated_at": "2025-01-01T10:00:00Z"
+        }
+    },
+    {
+        "model": "inventory.product",
+        "pk": 4,
+        "fields": {
+            "category": 2,
+            "name": "Classic Cotton T-Shirt",
+            "description": "Soft, breathable cotton. Available in multiple colors.",
+            "price": "19.99",
+            "stock_quantity": 200,
+            "created_at": "2025-01-01T10:00:00Z",
+            "updated_at": "2025-01-01T10:00:00Z"
+        }
+    },
+    {
+        "model": "inventory.product",
+        "pk": 5,
+        "fields": {
+            "category": 2,
+            "name": "Slim Fit Jeans",
+            "description": "Durable denim with a modern fit.",
+            "price": "49.99",
+            "stock_quantity": 150,
+            "created_at": "2025-01-01T10:00:00Z",
+            "updated_at": "2025-01-01T10:00:00Z"
+        }
+    },
+    {
+        "model": "inventory.product",
+        "pk": 6,
+        "fields": {
+            "category": 3,
+            "name": "Modern Coffee Table",
+            "description": "Minimalist design with oak finish.",
+            "price": "129.00",
+            "stock_quantity": 15,
+            "created_at": "2025-01-01T10:00:00Z",
+            "updated_at": "2025-01-01T10:00:00Z"
+        }
+    },
+    {
+        "model": "inventory.product",
+        "pk": 7,
+        "fields": {
+            "category": 3,
+            "name": "Ceramic Plant Pot",
+            "description": "Handcrafted ceramic pot for indoor plants.",
+            "price": "24.50",
+            "stock_quantity": 60,
+            "created_at": "2025-01-01T10:00:00Z",
+            "updated_at": "2025-01-01T10:00:00Z"
+        }
+    },
+    {
+        "model": "inventory.product",
+        "pk": 8,
+        "fields": {
+            "category": 1,
+            "name": "Gaming Laptop",
+            "description": "High performance laptop for gaming and work.",
+            "price": "1499.00",
+            "stock_quantity": 10,
+            "created_at": "2025-01-01T10:00:00Z",
+            "updated_at": "2025-01-01T10:00:00Z"
+        }
+    },
+    {
+        "model": "inventory.product",
+        "pk": 9,
+        "fields": {
+            "category": 2,
+            "name": "Running Shoes",
+            "description": "Lightweight and comfortable for daily runs.",
+            "price": "89.99",
+            "stock_quantity": 80,
+            "created_at": "2025-01-01T10:00:00Z",
+            "updated_at": "2025-01-01T10:00:00Z"
+        }
+    },
+    {
+        "model": "inventory.product",
+        "pk": 10,
+        "fields": {
+            "category": 3,
+            "name": "LED Desk Lamp",
+            "description": "Adjustable brightness and color temperature.",
+            "price": "39.99",
+            "stock_quantity": 45,
+            "created_at": "2025-01-01T10:00:00Z",
+            "updated_at": "2025-01-01T10:00:00Z"
+        }
+    }
+]

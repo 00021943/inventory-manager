@@ -1,0 +1,137 @@
+{% extends 'base.html' %}
+
+{% block title %}Shopping Cart - Retail Store{% endblock %}
+
+{% block content %}
+<h1 class="mb-4">Shopping Cart</h1>
+
+{% if cart_items %}
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-body">
+                <table class="table align-middle">
+                    <thead>
+                        <tr>
+                            <th>Product</th>
+                            <th>Price</th>
+                            <th>Quantity</th>
+                            <th>Subtotal</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in cart_items %}
+                        <tr>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    {% if item.product.image %}
+                                    <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}"
+                                        class="me-3 rounded" style="width: 50px; height: 50px; object-fit: cover;">
+                                    {% else %}
+                                    <div class="bg-secondary text-white d-flex align-items-center justify-content-center me-3 rounded"
+                                        style="width: 50px; height: 50px;">
+                                        <i class="bi bi-image"></i>
+                                    </div>
+                                    {% endif %}
+                                    <div>
+                                        <h6 class="mb-0">{{ item.product.name }}</h6>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>${{ item.product.price }}</td>
+                            <td>
+                                <div class="d-flex align-items-center gap-2">
+                                    <div class="btn-group" role="group">
+                                        <a href="{% url 'update_cart_quantity' item.product.pk 'decrease' %}" 
+                                           class="btn btn-sm btn-outline-primary"
+                                           data-cart-action="decrease"
+                                           data-product-id="{{ item.product.pk }}">
+                                            <i class="bi bi-dash"></i>
+                                        </a>
+                                        <span class="btn btn-sm btn-outline-secondary" style="min-width: 50px;" data-product-quantity="{{ item.product.pk }}">
+                                            {{ item.quantity }}
+                                        </span>
+                                        <a href="{% url 'update_cart_quantity' item.product.pk 'increase' %}" 
+                                           class="btn btn-sm btn-outline-primary"
+                                           data-cart-action="increase"
+                                           data-product-id="{{ item.product.pk }}">
+                                            <i class="bi bi-plus"></i>
+                                        </a>
+                                    </div>
+                                    {% if item.has_stock_issue %}
+                                    <span class="badge bg-warning text-dark" title="Available: {{ item.available_stock }}">
+                                        <i class="bi bi-exclamation-triangle"></i> Only {{ item.available_stock }} available
+                                    </span>
+                                    {% endif %}
+                                </div>
+                            </td>
+                            <td>
+                                ${{ item.subtotal }}
+                                {% if item.has_stock_issue %}
+                                <br><small class="text-danger">(max: ${{ item.product.price|floatformat:2 }} × {{ item.available_stock }})</small>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <a href="{% url 'remove_from_cart' item.product.pk %}"
+                                    class="btn btn-sm btn-outline-danger"
+                                    title="Remove from cart">
+                                    <i class="bi bi-trash"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">Summary</div>
+            <div class="card-body">
+                <div class="d-flex justify-content-between mb-3">
+                    <span class="fw-bold">Total</span>
+                    <span class="fw-bold fs-5">${{ total_price }}</span>
+                </div>
+                {% if has_stock_issues %}
+                <div class="alert alert-warning mb-3">
+                    <i class="bi bi-exclamation-triangle"></i> 
+                    <strong>Stock Issues Detected</strong><br>
+                    <small>Please adjust quantities before checkout. Some items exceed available stock.</small>
+                </div>
+                {% endif %}
+                
+                <div class="d-grid">
+                    {% if user.is_authenticated %}
+                        {% if has_stock_issues %}
+                        <button class="btn btn-secondary btn-lg" disabled title="Please fix stock issues first">
+                            <i class="bi bi-x-circle"></i> Cannot Checkout
+                        </button>
+                        {% else %}
+                        <a href="{% url 'checkout' %}" class="btn btn-success btn-lg">
+                            <i class="bi bi-cart-check"></i> Proceed to Checkout
+                        </a>
+                        {% endif %}
+                    {% else %}
+                    <a href="{% url 'login' %}?next={% url 'view_cart' %}" class="btn btn-primary btn-lg">
+                        <i class="bi bi-box-arrow-in-right"></i> Login to Checkout
+                    </a>
+                    {% endif %}
+                    <a href="{% url 'product_catalog' %}" class="btn btn-outline-secondary mt-2">
+                        <i class="bi bi-arrow-left"></i> Continue Shopping
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% else %}
+<div class="text-center py-5">
+    <i class="bi bi-cart-x display-1 text-muted"></i>
+    <h3 class="mt-3">Your cart is empty</h3>
+    <p class="text-muted">Looks like you haven't added anything to your cart yet.</p>
+    <a href="{% url 'product_catalog' %}" class="btn btn-primary mt-3">Start Shopping</a>
+</div>
+{% endif %}
+{% endblock %}

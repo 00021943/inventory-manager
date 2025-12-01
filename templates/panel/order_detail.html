@@ -1,0 +1,166 @@
+{% extends 'panel/base_panel.html' %}
+
+{% block title %}Order #{{ order.id }} - Staff Panel{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1>Order #{{ order.id }}</h1>
+    <a href="{% url 'panel:order_management' %}" class="btn btn-secondary">
+        <i class="bi bi-arrow-left"></i> Back to Orders
+    </a>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <!-- Order Details -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0">Order Information</h5>
+            </div>
+            <div class="card-body">
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <strong>Customer:</strong> {{ order.user.get_full_name|default:order.user.username }}<br>
+                        <strong>Email:</strong> {{ order.user.email|default:"-" }}<br>
+                        <strong>Order Date:</strong> {{ order.created_at|date:"F j, Y, g:i a" }}
+                    </div>
+                    <div class="col-md-6">
+                        <strong>Status:</strong> 
+                        <span class="badge bg-{% if order.status == 'completed' %}success{% elif order.status == 'pending' %}warning{% elif order.status == 'processing' %}info{% else %}danger{% endif %}">
+                            {{ order.status|title }}
+                        </span><br>
+                        <strong>Total Amount:</strong> <span class="h5">${{ order.total_price|floatformat:2 }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Order Items -->
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Order Items</h5>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Product</th>
+                                <th>Price</th>
+                                <th>Quantity</th>
+                                <th>Subtotal</th>
+                                <th>Stock Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in order.items.all %}
+                            <tr>
+                                <td>
+                                    <strong>{{ item.product.name }}</strong><br>
+                                    <small class="text-muted">{{ item.product.category.name }}</small>
+                                </td>
+                                <td>${{ item.price|floatformat:2 }}</td>
+                                <td>{{ item.quantity }}</td>
+                                <td>${{ item.get_cost|floatformat:2 }}</td>
+                                <td>
+                                    {% if item.product.stock_quantity > 0 %}
+                                        <span class="badge bg-success">{{ item.product.stock_quantity }} in stock</span>
+                                    {% else %}
+                                        <span class="badge bg-danger">Out of stock</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                        <tfoot class="table-light">
+                            <tr>
+                                <td colspan="3" class="text-end"><strong>Total:</strong></td>
+                                <td colspan="2"><strong>${{ order.total_price|floatformat:2 }}</strong></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <!-- Status Management -->
+        <div class="card mb-4">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">Update Status</h5>
+            </div>
+            <div class="card-body">
+                <p class="small text-muted mb-3">Current status: <strong>{{ order.status|title }}</strong></p>
+                
+                <div class="d-grid gap-2">
+                    {% if order.status != 'pending' %}
+                    <a href="{% url 'panel:update_order_status' order.pk 'pending' %}" 
+                       class="btn btn-warning">
+                        <i class="bi bi-clock"></i> Mark as Pending
+                    </a>
+                    {% endif %}
+                    
+                    {% if order.status != 'processing' %}
+                    <a href="{% url 'panel:update_order_status' order.pk 'processing' %}" 
+                       class="btn btn-info">
+                        <i class="bi bi-arrow-repeat"></i> Mark as Processing
+                    </a>
+                    {% endif %}
+                    
+                    {% if order.status != 'completed' %}
+                    <a href="{% url 'panel:update_order_status' order.pk 'completed' %}" 
+                       class="btn btn-success">
+                        <i class="bi bi-check-circle"></i> Mark as Completed
+                    </a>
+                    {% endif %}
+                    
+                    {% if order.status != 'cancelled' %}
+                    <a href="{% url 'panel:update_order_status' order.pk 'cancelled' %}" 
+                       class="btn btn-danger"
+                       onclick="return confirm('Are you sure you want to cancel this order? Stock will be restored.')">
+                        <i class="bi bi-x-circle"></i> Cancel Order
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Order Timeline -->
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Order Timeline</h5>
+            </div>
+            <div class="card-body">
+                <div class="timeline">
+                    <div class="mb-3">
+                        <strong>Order Created</strong><br>
+                        <small class="text-muted">{{ order.created_at|date:"M d, Y g:i a" }}</small>
+                    </div>
+                    
+                    {% if order.status == 'processing' or order.status == 'completed' %}
+                    <div class="mb-3">
+                        <strong>Processing Started</strong><br>
+                        <small class="text-muted">-</small>
+                    </div>
+                    {% endif %}
+                    
+                    {% if order.status == 'completed' %}
+                    <div class="mb-3">
+                        <strong>Order Completed</strong><br>
+                        <small class="text-muted">-</small>
+                    </div>
+                    {% endif %}
+                    
+                    {% if order.status == 'cancelled' %}
+                    <div class="mb-3 text-danger">
+                        <strong>Order Cancelled</strong><br>
+                        <small class="text-muted">-</small>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

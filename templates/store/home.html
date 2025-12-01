@@ -1,0 +1,106 @@
+{% extends 'base.html' %}
+{% load cart_filters %}
+
+{% block title %}Home - Retail Store{% endblock %}
+
+{% block content %}
+<div class="p-5 mb-4 bg-light rounded-3 text-center">
+    <div class="container-fluid py-5">
+        <h1 class="display-5 fw-bold">Welcome to Our Store</h1>
+        <p class="col-md-8 fs-4 mx-auto">Discover our premium collection of products. Quality you can trust, prices
+            you'll love.</p>
+        <a href="{% url 'product_catalog' %}" class="btn btn-primary btn-lg" type="button">Shop Now</a>
+    </div>
+</div>
+
+<h2 class="mb-4 text-center">Featured Products</h2>
+<div class="row row-cols-1 row-cols-md-4 g-4">
+    {% for product in featured_products %}
+    <div class="col">
+        <div class="card h-100">
+            {% if product.image %}
+            <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}"
+                style="height: 200px; object-fit: cover;">
+            {% else %}
+            <div class="bg-secondary text-white d-flex align-items-center justify-content-center"
+                style="height: 200px;">
+                <i class="bi bi-image fs-1"></i>
+            </div>
+            {% endif %}
+            <div class="card-body">
+                <h5 class="card-title">{{ product.name }}</h5>
+                <p class="card-text text-muted">${{ product.price }}</p>
+                <div class="d-grid gap-2">
+                    <a href="{% url 'product_detail' product.pk %}" class="btn btn-outline-secondary">View Details</a>
+                    {% if user.is_authenticated %}
+                        {% if product.stock_quantity > 0 %}
+                            {% with product_id=product.pk|stringformat:"s" %}
+                                {% if product_id in cart %}
+                                <div class="btn-group" role="group" data-cart-controls="{{ product.pk }}">
+                                    <a href="{% url 'update_cart_quantity' product.pk 'decrease' %}" 
+                                       class="btn btn-outline-primary"
+                                       data-cart-action="decrease"
+                                       data-product-id="{{ product.pk }}">
+                                        <i class="bi bi-dash"></i>
+                                    </a>
+                                    <button class="btn btn-primary" disabled style="min-width: 50px;" data-product-quantity="{{ product.pk }}">
+                                        {{ cart|get_item:product_id }}
+                                    </button>
+                                    <a href="{% url 'update_cart_quantity' product.pk 'increase' %}" 
+                                       class="btn btn-outline-primary"
+                                       data-cart-action="increase"
+                                       data-product-id="{{ product.pk }}">
+                                        <i class="bi bi-plus"></i>
+                                    </a>
+                                </div>
+                                <a href="{% url 'add_to_cart' product.pk %}" class="btn btn-primary" style="display: none;" data-add-button="{{ product.pk }}">Add to Cart</a>
+                                {% else %}
+                                <div class="btn-group" role="group" data-cart-controls="{{ product.pk }}" style="display: none;">
+                                    <a href="{% url 'update_cart_quantity' product.pk 'decrease' %}" 
+                                       class="btn btn-outline-primary"
+                                       data-cart-action="decrease"
+                                       data-product-id="{{ product.pk }}">
+                                        <i class="bi bi-dash"></i>
+                                    </a>
+                                    <button class="btn btn-primary" disabled style="min-width: 50px;" data-product-quantity="{{ product.pk }}">0</button>
+                                    <a href="{% url 'update_cart_quantity' product.pk 'increase' %}" 
+                                       class="btn btn-outline-primary"
+                                       data-cart-action="increase"
+                                       data-product-id="{{ product.pk }}">
+                                        <i class="bi bi-plus"></i>
+                                    </a>
+                                </div>
+                                <a href="{% url 'add_to_cart' product.pk %}" class="btn btn-primary" data-add-button="{{ product.pk }}">Add to Cart</a>
+                                {% endif %}
+                            {% endwith %}
+                        {% else %}
+                        <button class="btn btn-secondary" disabled>Out of Stock</button>
+                        {% endif %}
+                    {% else %}
+                        {% if product.stock_quantity > 0 %}
+                        <a href="{% url 'login' %}" class="btn btn-primary">Login to Add to Cart</a>
+                        {% else %}
+                        <button class="btn btn-secondary" disabled>Out of Stock</button>
+                        {% endif %}
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<div class="row mt-5">
+    <div class="col-md-6">
+        <h3>About Us</h3>
+        <p>We are a dedicated retail store committed to providing the best products to our customers. Our inventory is
+            managed in real-time to ensure you always get what you need.</p>
+    </div>
+    <div class="col-md-6">
+        <h3>Contact</h3>
+        <p><i class="bi bi-geo-alt"></i> 123 Store Street, City, Country</p>
+        <p><i class="bi bi-envelope"></i> support@retailstore.com</p>
+        <p><i class="bi bi-telephone"></i> +1 234 567 890</p>
+    </div>
+</div>
+{% endblock %}

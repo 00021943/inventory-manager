@@ -1,0 +1,129 @@
+{% extends 'panel/base_panel.html' %}
+
+{% block title %}Customer: {{ customer.username }} - Staff Panel{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1>Customer: {{ customer.username }}</h1>
+    <a href="{% url 'panel:customer_management' %}" class="btn btn-secondary">
+        <i class="bi bi-arrow-left"></i> Back to Customers
+    </a>
+</div>
+
+<div class="row">
+    <!-- Customer Information -->
+    <div class="col-md-4">
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0">Customer Information</h5>
+            </div>
+            <div class="card-body">
+                <p><strong>Username:</strong> {{ customer.username }}</p>
+                <p><strong>Full Name:</strong> {{ customer.get_full_name|default:"-" }}</p>
+                <p><strong>Email:</strong> {{ customer.email|default:"-" }}</p>
+                <p><strong>Status:</strong> 
+                    {% if customer.is_active %}
+                        <span class="badge bg-success">Active</span>
+                    {% else %}
+                        <span class="badge bg-danger">Inactive</span>
+                    {% endif %}
+                </p>
+                <p><strong>Joined:</strong> {{ customer.date_joined|date:"F j, Y" }}</p>
+                <p><strong>Last Login:</strong> {{ customer.last_login|date:"F j, Y, g:i a"|default:"Never" }}</p>
+                
+                <hr>
+                
+                <div class="d-grid gap-2">
+                    {% if customer.is_active %}
+                    <a href="{% url 'panel:customer_toggle_status' customer.pk %}" 
+                       class="btn btn-warning"
+                       onclick="return confirm('Are you sure you want to deactivate this customer?')">
+                        <i class="bi bi-pause-circle"></i> Deactivate
+                    </a>
+                    {% else %}
+                    <a href="{% url 'panel:customer_toggle_status' customer.pk %}" 
+                       class="btn btn-success">
+                        <i class="bi bi-play-circle"></i> Activate
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Statistics -->
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Statistics</h5>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <h6 class="text-muted">Total Orders</h6>
+                    <h3>{{ total_orders }}</h3>
+                </div>
+                <div class="mb-3">
+                    <h6 class="text-muted">Completed Orders</h6>
+                    <h3 class="text-success">{{ completed_orders }}</h3>
+                </div>
+                <div class="mb-3">
+                    <h6 class="text-muted">Pending Orders</h6>
+                    <h3 class="text-warning">{{ pending_orders }}</h3>
+                </div>
+                <div>
+                    <h6 class="text-muted">Total Spent</h6>
+                    <h3 class="text-primary">${{ total_spent|floatformat:2 }}</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Customer Orders -->
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Order History</h5>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Order ID</th>
+                                <th>Date</th>
+                                <th>Status</th>
+                                <th>Total</th>
+                                <th>Items</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for order in orders %}
+                            <tr>
+                                <td><strong>#{{ order.id }}</strong></td>
+                                <td>{{ order.created_at|date:"M d, Y H:i" }}</td>
+                                <td>
+                                    <span class="badge bg-{% if order.status == 'completed' %}success{% elif order.status == 'pending' %}warning{% elif order.status == 'processing' %}info{% else %}danger{% endif %}">
+                                        {{ order.status|title }}
+                                    </span>
+                                </td>
+                                <td>${{ order.total_price|floatformat:2 }}</td>
+                                <td>{{ order.items.count }} item{{ order.items.count|pluralize }}</td>
+                                <td>
+                                    <a href="{% url 'panel:order_detail' order.pk %}" class="btn btn-sm btn-outline-primary">
+                                        <i class="bi bi-eye"></i> View
+                                    </a>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="6" class="text-center py-4">No orders found for this customer.</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
