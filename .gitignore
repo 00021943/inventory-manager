@@ -1,9 +1,6 @@
 media/*
 !media/.gitkeep
 
-static/*
-!static/.gitkeep
-
 .venv
 venv
 .env
