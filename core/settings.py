@@ -38,6 +38,14 @@ if allowed_hosts_env:
 else:
     ALLOWED_HOSTS = ['*']
 
+# CSRF settings
+# CSRF_TRUSTED_ORIGINS is REQUIRED for HTTPS sites (Django 4.0+)
+# Without it, you'll get "CSRF verification failed" errors
+csrf_trusted_origins_env = os.getenv('CSRF_TRUSTED_ORIGINS', '')
+if csrf_trusted_origins_env:
+    CSRF_TRUSTED_ORIGINS = [origin.strip() for origin in csrf_trusted_origins_env.split(',') if origin.strip()]
+else:
+    CSRF_TRUSTED_ORIGINS = []
 
 # Application definition
 
