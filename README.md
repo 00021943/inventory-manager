@@ -53,7 +53,13 @@ For production environments, we use `docker-compose.prod.yml`.
 ### Local Development
 For local development, you can run the database in Docker and the Django application locally.
 
-1.  **Start Database:**
+1.  **Clone the repository:**
+    ```bash
+    git clone https://github.com/00021943/inventory-manager.git
+    cd inventory-manager
+    ```
+
+2.  **Start Database:**
     ```bash
     docker compose up -d
     ```
@@ -112,5 +118,17 @@ For local development, you can run the database in Docker and the Django applica
     ```
 
 ## Usage
--   **Storefront:** Access at `http://127.0.0.1:8000/`.
--   **Admin Panel:** Access at `http://127.0.0.1:8000/panel/` (Note: Default Django admin is disabled).
+-   **Storefront:** Access at `http://127.0.0.1:8008/`.
+-   **Admin Panel:** Access at `http://127.0.0.1:8008/panel/` (Note: Default Django admin is disabled).
+
+## Live Demo & Credentials
+
+The application is deployed and accessible at: **[https://id0021943.bytogo.uz/](https://id0021943.bytogo.uz/)**
+
+**Super Admin Access:**
+*   **Login:** `00021943`
+*   **Password:** `password00021943`
+
+**Client Access:**
+*   **Login:** `wiut_test`
+*   **Password:** `77girado`
