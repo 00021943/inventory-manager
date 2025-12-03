@@ -120,10 +120,13 @@ For local development, you can run the database in Docker and the Django applica
 ## Usage
 -   **Storefront:** Access at `http://127.0.0.1:8008/`.
 -   **Admin Panel:** Access at `http://127.0.0.1:8008/panel/` (Note: Default Django admin is disabled).
+-   **REST API:** Access at `http://127.0.0.1:8008/api/`.
 
 ## Live Demo & Credentials
 
-The application is deployed and accessible at: **[https://id0021943.bytogo.uz/](https://id0021943.bytogo.uz/)**
+The application is deployed and accessible at:
+*   **Storefront:** [https://id0021943.bytogo.uz/](https://id0021943.bytogo.uz/)
+*   **REST API:** [https://id0021943.bytogo.uz/api/](https://id0021943.bytogo.uz/api/)
 
 **Super Admin Access:**
 *   **Login:** `00021943`
